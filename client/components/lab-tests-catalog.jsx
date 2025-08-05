@@ -1,83 +1,43 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Search, TestTube, Clock, DollarSign, Calendar } from "lucide-react"
-
-const labTests = [
-  {
-    id: 1,
-    name: "Complete Blood Count (CBC)",
-    category: "Blood Tests",
-    price: 299,
-    duration: "2-4 hours",
-    description: "Comprehensive blood analysis including RBC, WBC, platelets, and hemoglobin levels.",
-    preparation: "No fasting required",
-    popular: true,
-  },
-  {
-    id: 2,
-    name: "Lipid Profile",
-    category: "Blood Tests",
-    price: 450,
-    duration: "4-6 hours",
-    description: "Cholesterol and triglyceride levels to assess cardiovascular health.",
-    preparation: "12-hour fasting required",
-    popular: true,
-  },
-  {
-    id: 3,
-    name: "Thyroid Function Test (TFT)",
-    category: "Hormone Tests",
-    price: 650,
-    duration: "6-8 hours",
-    description: "TSH, T3, and T4 levels to evaluate thyroid function.",
-    preparation: "No special preparation needed",
-    popular: false,
-  },
-  {
-    id: 4,
-    name: "Diabetes Panel (HbA1c)",
-    category: "Blood Tests",
-    price: 380,
-    duration: "4-6 hours",
-    description: "Blood sugar levels and HbA1c for diabetes monitoring.",
-    preparation: "No fasting required for HbA1c",
-    popular: true,
-  },
-  {
-    id: 5,
-    name: "Liver Function Test (LFT)",
-    category: "Blood Tests",
-    price: 520,
-    duration: "4-6 hours",
-    description: "Comprehensive liver enzyme and protein analysis.",
-    preparation: "8-hour fasting recommended",
-    popular: false,
-  },
-  {
-    id: 6,
-    name: "Vitamin D Test",
-    category: "Vitamin Tests",
-    price: 750,
-    duration: "24-48 hours",
-    description: "Vitamin D3 levels to assess bone health and immunity.",
-    preparation: "No special preparation needed",
-    popular: true,
-  },
-]
+import { testsAPI, bookingsAPI } from "@/lib/api"
 
 export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [bookingTest, setBookingTest] = useState(null)
+  const [tests, setTests] = useState([])
+  const [categories, setCategories] = useState(["All"])
+  const [loading, setLoading] = useState(true)
 
-  const categories = ["All", ...new Set(labTests.map((test) => test.category))]
+  // Load tests and categories on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [testsResponse, categoriesResponse] = await Promise.all([
+          testsAPI.getAll(),
+          testsAPI.getCategories()
+        ])
+        
+        setTests(testsResponse.data)
+        setCategories(["All", ...categoriesResponse.data])
+      } catch (error) {
+        console.error('Failed to load tests:', error)
+        alert('Failed to load tests. Please try again.')
+      }
+      setLoading(false)
+    }
 
-  const filteredTests = labTests.filter((test) => {
+    loadData()
+  }, [])
+
+  const filteredTests = tests.filter((test) => {
     const matchesSearch =
       test.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       test.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,20 +45,37 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
     return matchesSearch && matchesCategory
   })
 
-  const handleBookTest = (test) => {
+  const handleBookTest = async (test) => {
     setBookingTest(test)
-    setTimeout(() => {
-      onTestBooked({
-        testId: test.id,
-        testName: test.name,
-        price: test.price,
-        category: test.category,
-        scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    
+    try {
+      const bookingData = {
+        testId: test._id,
+        scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         scheduledTime: "10:00 AM",
-      })
-      setBookingTest(null)
+        notes: ""
+      }
+      
+      const response = await bookingsAPI.create(bookingData)
+      onTestBooked(response.data)
       alert(`Test "${test.name}" has been successfully booked!`)
-    }, 2000)
+    } catch (error) {
+      console.error('Booking failed:', error)
+      alert(`Booking failed: ${error.message}`)
+    }
+    
+    setBookingTest(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <TestTube className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-600">Loading tests...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -150,7 +127,7 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTests.map((test) => (
-            <Card key={test.id} className="hover:shadow-lg transition-shadow">
+            <Card key={test._id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg">{test.name}</CardTitle>
@@ -182,8 +159,12 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
                   </div>
                 </div>
 
-                <Button className="w-full" onClick={() => handleBookTest(test)} disabled={bookingTest?.id === test.id}>
-                  {bookingTest?.id === test.id ? "Booking..." : "Book Test"}
+                <Button 
+                  className="w-full" 
+                  onClick={() => handleBookTest(test)} 
+                  disabled={bookingTest?._id === test._id}
+                >
+                  {bookingTest?._id === test._id ? "Booking..." : "Book Test"}
                 </Button>
               </CardContent>
             </Card>

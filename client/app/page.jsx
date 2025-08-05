@@ -1,35 +1,67 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PatientRegistration from "../components/patient-registration"
 import LabTestsCatalog from "../components/lab-tests-catalog"
 import BookingHistory from "../components/booking-history"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { User, TestTube, History, Heart } from "lucide-react"
+import { authHelpers, patientsAPI, bookingsAPI } from "@/lib/api"
 
 export default function PatientPortal() {
   const [currentView, setCurrentView] = useState("home")
   const [patient, setPatient] = useState(null)
   const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
 
+  // Check for existing authentication on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (authHelpers.isAuthenticated()) {
+        try {
+          const response = await patientsAPI.getProfile()
+          setPatient(response.data)
+          
+          // Load bookings
+          const bookingsResponse = await bookingsAPI.getAll()
+          setBookings(bookingsResponse.data)
+        } catch (error) {
+          console.error('Failed to load patient data:', error)
+          authHelpers.removeToken()
+        }
+      }
+      setLoading(false)
+    }
+
+    checkAuth()
+  }, [])
   const handlePatientRegistration = (patientData) => {
     setPatient(patientData)
     setCurrentView("tests")
   }
 
-  const handleTestBooking = (testData) => {
-    const newBooking = {
-      id: Date.now(),
-      ...testData,
-      patientName: patient?.name || "Patient",
-      bookingDate: new Date().toLocaleDateString(),
-      status: "Scheduled",
-      reportAvailable: Math.random() > 0.5,
-    }
+  const handleTestBooking = (newBooking) => {
     setBookings([...bookings, newBooking])
   }
 
+  const handleLogout = () => {
+    authHelpers.removeToken()
+    setPatient(null)
+    setBookings([])
+    setCurrentView("home")
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <Heart className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
   const renderCurrentView = () => {
     switch (currentView) {
       case "register":
@@ -60,12 +92,17 @@ export default function PatientPortal() {
               {patient && (
                 <Card className="mb-8 bg-green-50 border-green-200">
                   <CardContent className="p-6">
-                    <div className="flex items-center">
-                      <User className="h-8 w-8 text-green-600 mr-3" />
-                      <div>
-                        <h3 className="text-lg font-semibold text-green-800">Welcome back, {patient.name}!</h3>
-                        <p className="text-green-600">Patient ID: {patient.id}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <User className="h-8 w-8 text-green-600 mr-3" />
+                        <div>
+                          <h3 className="text-lg font-semibold text-green-800">Welcome back, {patient.name}!</h3>
+                          <p className="text-green-600">Patient ID: {patient.patientId}</p>
+                        </div>
                       </div>
+                      <Button variant="outline" size="sm" onClick={handleLogout}>
+                        Logout
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

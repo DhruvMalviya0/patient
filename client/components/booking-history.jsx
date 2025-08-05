@@ -5,41 +5,28 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Download, Calendar, TestTube, Clock, FileText, Eye } from "lucide-react"
+import { bookingsAPI } from "@/lib/api"
 
-const generateDummyReport = (booking) => {
-  const reportData = `
-Patient Report
-==============
-
-Patient Name: ${booking.patientName}
-Test: ${booking.testName}
-Booking Date: ${booking.bookingDate}
-Report Date: ${new Date().toLocaleDateString()}
-
-Test Results:
-- All parameters within normal range
-- No abnormalities detected
-- Recommended follow-up: 6 months
-
-This is a dummy report for demonstration purposes.
-  `.trim()
-
-  const blob = new Blob([reportData], { type: "text/plain" })
-  return URL.createObjectURL(blob)
-}
 
 export default function BookingHistory({ bookings, patient, onBack }) {
   const [viewingReport, setViewingReport] = useState(null)
 
-  const handleDownloadReport = (booking) => {
-    const reportUrl = generateDummyReport(booking)
-    const link = document.createElement("a")
-    link.href = reportUrl
-    link.download = `${booking.testName.replace(/\s+/g, "_")}_Report_${booking.id}.txt`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(reportUrl)
+  const handleDownloadReport = async (booking) => {
+    try {
+      const response = await bookingsAPI.downloadReport(booking._id)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `${booking.test.name.replace(/\s+/g, "_")}_Report_${booking.bookingId}.txt`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Download failed:', error)
+      alert(`Download failed: ${error.message}`)
+    }
   }
 
   const handleViewReport = (booking) => {
@@ -76,7 +63,7 @@ export default function BookingHistory({ bookings, patient, onBack }) {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <FileText className="h-6 w-6 mr-2" />
-                Test Report - {viewingReport.testName}
+                Test Report - {viewingReport.test.name}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -85,22 +72,22 @@ export default function BookingHistory({ bookings, patient, onBack }) {
                   <div>
                     <h3 className="font-semibold mb-2">Patient Information</h3>
                     <p>
-                      <strong>Name:</strong> {viewingReport.patientName}
+                      <strong>Name:</strong> {viewingReport.patient.name}
                     </p>
                     <p>
-                      <strong>Patient ID:</strong> {patient?.id}
+                      <strong>Patient ID:</strong> {patient?.patientId}
                     </p>
                     <p>
-                      <strong>Test Date:</strong> {viewingReport.scheduledDate}
+                      <strong>Test Date:</strong> {new Date(viewingReport.scheduledDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2">Test Information</h3>
                     <p>
-                      <strong>Test:</strong> {viewingReport.testName}
+                      <strong>Test:</strong> {viewingReport.test.name}
                     </p>
                     <p>
-                      <strong>Category:</strong> {viewingReport.category}
+                      <strong>Category:</strong> {viewingReport.test.category}
                     </p>
                     <p>
                       <strong>Report Date:</strong> {new Date().toLocaleDateString()}
@@ -161,7 +148,7 @@ export default function BookingHistory({ bookings, patient, onBack }) {
           <p className="text-gray-600">View your test bookings and download reports</p>
           {patient && (
             <p className="text-sm text-blue-600 mt-2">
-              Patient: {patient.name} (ID: {patient.id})
+              Patient: {patient.name} (ID: {patient.patientId})
             </p>
           )}
         </div>
@@ -178,25 +165,25 @@ export default function BookingHistory({ bookings, patient, onBack }) {
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => (
-              <Card key={booking.id} className="hover:shadow-md transition-shadow">
+              <Card key={booking._id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
                         <TestTube className="h-5 w-5 text-blue-600 mr-2" />
-                        <h3 className="text-lg font-semibold">{booking.testName}</h3>
+                        <h3 className="text-lg font-semibold">{booking.test.name}</h3>
                         <Badge className={`ml-3 ${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                       </div>
 
                       <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2" />
-                          <span>Booked: {booking.bookingDate}</span>
+                          <span>Booked: {new Date(booking.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-2" />
                           <span>
-                            Scheduled: {booking.scheduledDate} at {booking.scheduledTime}
+                            Scheduled: {new Date(booking.scheduledDate).toLocaleDateString()} at {booking.scheduledTime}
                           </span>
                         </div>
                         <div className="flex items-center">
@@ -204,7 +191,7 @@ export default function BookingHistory({ bookings, patient, onBack }) {
                         </div>
                       </div>
 
-                      <p className="text-sm text-gray-500 mt-2">Category: {booking.category}</p>
+                      <p className="text-sm text-gray-500 mt-2">Category: {booking.test.category}</p>
                     </div>
 
                     <div className="flex gap-2 mt-4 md:mt-0">
