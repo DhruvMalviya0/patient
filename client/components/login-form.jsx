@@ -46,19 +46,16 @@ export default function LoginForm({ onLoginSuccess, onRegisterClick }) {
 
     try {
       // Import the auth API
-      const { auth } = await import('@/lib/api')
+      const { authAPI } = await import('@/lib/api')
       
       // Login the patient
-      const response = await auth.login(formData)
-      
-      // Store the token in localStorage
-      localStorage.setItem('token', response.data.token)
+      const response = await authAPI.login(formData)
       
       // Complete login
       onLoginSuccess(response.data.patient)
     } catch (error) {
       console.error('Login error:', error)
-      alert(error.response?.data?.message || 'Login failed. Please check your credentials.')
+      alert(error.message || 'Login failed. Please check your credentials.')
     } finally {
       setIsSubmitting(false)
     }

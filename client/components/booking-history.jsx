@@ -5,65 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Download, Calendar, TestTube, Clock, FileText, Eye } from "lucide-react"
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
 import { generateMedicalReportPDF } from "@/lib/pdfUtils"
-
-// Legacy text report generator kept for reference
-// const generateDummyReport = (booking) => {
-//   const reportData = `
-// Patient Report
-// ==============
-// 
-// Patient Name: ${booking.patientName}
-// Test: ${booking.testName}
-// Booking Date: ${booking.bookingDate}
-// Report Date: ${new Date().toLocaleDateString()}
-// 
-// Test Results:
-// - All parameters within normal range
-// - No abnormalities detected
-// - Recommended follow-up: 6 months
-// 
-// This is a dummy report for demonstration purposes.
-//   `.trim()
-// 
-//   const blob = new Blob([reportData], { type: "text/plain" })
-//   return URL.createObjectURL(blob)
-// }
-<<<<<<< HEAD
-=======
-=======
-import { bookingsAPI } from "@/lib/api"
-
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
->>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
 
 export default function BookingHistory({ bookings, patient, onBack }) {
   const [viewingReport, setViewingReport] = useState(null)
 
-<<<<<<< HEAD
-  const handleDownloadReport = (booking) => {
-    // Create report data object with all necessary information
-    const reportData = {
-      patientName: booking.patientName,
-      patientId: patient?.id || 'Unknown',
-      testName: booking.testName,
-      category: booking.category,
-      bookingDate: booking.bookingDate,
-      scheduledDate: booking.scheduledDate,
-      scheduledTime: booking.scheduledTime
-    }
-    
-    // Generate PDF using the utility function
-    generateMedicalReportPDF(reportData)
-<<<<<<< HEAD
-=======
-=======
   const handleDownloadReport = async (booking) => {
     try {
+      const { bookingsAPI } = await import('@/lib/api')
       const response = await bookingsAPI.downloadReport(booking._id)
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -78,8 +27,6 @@ export default function BookingHistory({ bookings, patient, onBack }) {
       console.error('Download failed:', error)
       alert(`Download failed: ${error.message}`)
     }
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
->>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
   }
 
   const handleViewReport = (booking) => {
@@ -123,45 +70,24 @@ export default function BookingHistory({ bookings, patient, onBack }) {
               <div className="bg-slate-700/50 p-6 rounded-lg border border-slate-600">
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>
-<<<<<<< HEAD
                     <h3 className="font-semibold mb-2 text-white">Patient Information</h3>
                     <p className="text-slate-300">
-                      <strong>Name:</strong> {viewingReport.patientName}
+                      <strong>Name:</strong> {viewingReport.patient.name}
                     </p>
                     <p className="text-slate-300">
-                      <strong>Patient ID:</strong> {patient?.id}
+                      <strong>Patient ID:</strong> {patient?.patientId || patient?.id}
                     </p>
                     <p className="text-slate-300">
-                      <strong>Test Date:</strong> {viewingReport.scheduledDate}
+                      <strong>Test Date:</strong> {new Date(viewingReport.scheduledDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
                     <h3 className="font-semibold mb-2 text-white">Test Information</h3>
                     <p className="text-slate-300">
-                      <strong>Test:</strong> {viewingReport.testName}
-                    </p>
-                    <p className="text-slate-300">
-                      <strong>Category:</strong> {viewingReport.category}
-=======
-                    <h3 className="font-semibold mb-2">Patient Information</h3>
-                    <p>
-                      <strong>Name:</strong> {viewingReport.patient.name}
-                    </p>
-                    <p>
-                      <strong>Patient ID:</strong> {patient?.patientId}
-                    </p>
-                    <p>
-                      <strong>Test Date:</strong> {new Date(viewingReport.scheduledDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">Test Information</h3>
-                    <p>
                       <strong>Test:</strong> {viewingReport.test.name}
                     </p>
-                    <p>
+                    <p className="text-slate-300">
                       <strong>Category:</strong> {viewingReport.test.category}
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
                     </p>
                     <p className="text-slate-300">
                       <strong>Report Date:</strong> {new Date().toLocaleDateString()}
@@ -221,13 +147,8 @@ export default function BookingHistory({ bookings, patient, onBack }) {
           </div>
           <p className="text-slate-300">View your test bookings and download reports</p>
           {patient && (
-<<<<<<< HEAD
             <p className="text-sm text-blue-400 mt-2">
-              Patient: {patient.name} (ID: {patient.id})
-=======
-            <p className="text-sm text-blue-600 mt-2">
-              Patient: {patient.name} (ID: {patient.patientId})
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
+              Patient: {patient.name} (ID: {patient.patientId || patient.id})
             </p>
           )}
         </div>
@@ -244,22 +165,13 @@ export default function BookingHistory({ bookings, patient, onBack }) {
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => (
-<<<<<<< HEAD
-              <Card key={booking.id} className="hover:shadow-xl transition-all duration-300 bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 hover:border-slate-600">
-=======
-              <Card key={booking._id} className="hover:shadow-md transition-shadow">
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
+              <Card key={booking._id} className="hover:shadow-xl transition-all duration-300 bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 hover:border-slate-600">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
-<<<<<<< HEAD
                         <TestTube className="h-5 w-5 text-blue-400 mr-2" />
-                        <h3 className="text-lg font-semibold text-white">{booking.testName}</h3>
-=======
-                        <TestTube className="h-5 w-5 text-blue-600 mr-2" />
-                        <h3 className="text-lg font-semibold">{booking.test.name}</h3>
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
+                        <h3 className="text-lg font-semibold text-white">{booking.test.name}</h3>
                         <Badge className={`ml-3 ${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                       </div>
 
@@ -279,11 +191,7 @@ export default function BookingHistory({ bookings, patient, onBack }) {
                         </div>
                       </div>
 
-<<<<<<< HEAD
-                      <p className="text-sm text-slate-400 mt-2">Category: {booking.category}</p>
-=======
-                      <p className="text-sm text-gray-500 mt-2">Category: {booking.test.category}</p>
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
+                      <p className="text-sm text-slate-400 mt-2">Category: {booking.test.category}</p>
                     </div>
 
                     <div className="flex gap-2 mt-4 md:mt-0">

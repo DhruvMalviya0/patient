@@ -90,6 +90,7 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
   useEffect(() => {
     const loadData = async () => {
       try {
+        const { testsAPI } = await import('@/lib/api')
         const [testsResponse, categoriesResponse] = await Promise.all([
           testsAPI.getAll(),
           testsAPI.getCategories()
@@ -119,6 +120,7 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
     setBookingTest(test)
     
     try {
+      const { bookingsAPI } = await import('@/lib/api')
       const bookingData = {
         testId: test._id,
         scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],

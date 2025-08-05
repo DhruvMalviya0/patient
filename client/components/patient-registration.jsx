@@ -75,19 +75,16 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
 >>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
     try {
       // Import the auth API
-      const { auth } = await import('@/lib/api')
+      const { authAPI } = await import('@/lib/api')
       
       // Register the patient
-      const response = await auth.register(formData)
-      
-      // Store the token in localStorage
-      localStorage.setItem('token', response.data.token)
+      const response = await authAPI.register(formData)
       
       // Complete registration
       onRegistrationComplete(response.data.patient)
     } catch (error) {
       console.error('Registration error:', error)
-      alert(error.response?.data?.message || 'Registration failed. Please try again.')
+      alert(error.message || 'Registration failed. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
