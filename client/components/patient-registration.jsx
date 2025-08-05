@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, User } from "lucide-react"
+import { authAPI, authHelpers } from "@/lib/api"
 
 export default function PatientRegistration({ onRegistrationComplete, onBack }) {
   const [formData, setFormData] = useState({
@@ -68,6 +69,7 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
 
     setIsSubmitting(true)
 
+<<<<<<< HEAD
     try {
       // Import the auth API
       const { auth } = await import('@/lib/api')
@@ -86,6 +88,25 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
     } finally {
       setIsSubmitting(false)
     }
+=======
+    const registerPatient = async () => {
+      try {
+        const response = await authAPI.register(formData)
+        
+        // Store the token
+        authHelpers.setToken(response.data.token)
+        
+        // Pass patient data to parent
+        onRegistrationComplete(response.data.patient)
+      } catch (error) {
+        console.error('Registration failed:', error)
+        alert(`Registration failed: ${error.message}`)
+      }
+      setIsSubmitting(false)
+    }
+
+    registerPatient()
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
   }
 
   return (

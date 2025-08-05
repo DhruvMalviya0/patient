@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Download, Calendar, TestTube, Clock, FileText, Eye } from "lucide-react"
+<<<<<<< HEAD
 import { generateMedicalReportPDF } from "@/lib/pdfUtils"
 
 // Legacy text report generator kept for reference
@@ -29,10 +30,15 @@ import { generateMedicalReportPDF } from "@/lib/pdfUtils"
 //   const blob = new Blob([reportData], { type: "text/plain" })
 //   return URL.createObjectURL(blob)
 // }
+=======
+import { bookingsAPI } from "@/lib/api"
+
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
 
 export default function BookingHistory({ bookings, patient, onBack }) {
   const [viewingReport, setViewingReport] = useState(null)
 
+<<<<<<< HEAD
   const handleDownloadReport = (booking) => {
     // Create report data object with all necessary information
     const reportData = {
@@ -47,6 +53,24 @@ export default function BookingHistory({ bookings, patient, onBack }) {
     
     // Generate PDF using the utility function
     generateMedicalReportPDF(reportData)
+=======
+  const handleDownloadReport = async (booking) => {
+    try {
+      const response = await bookingsAPI.downloadReport(booking._id)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `${booking.test.name.replace(/\s+/g, "_")}_Report_${booking.bookingId}.txt`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Download failed:', error)
+      alert(`Download failed: ${error.message}`)
+    }
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
   }
 
   const handleViewReport = (booking) => {
@@ -83,13 +107,14 @@ export default function BookingHistory({ bookings, patient, onBack }) {
             <CardHeader>
               <CardTitle className="flex items-center text-white">
                 <FileText className="h-6 w-6 mr-2" />
-                Test Report - {viewingReport.testName}
+                Test Report - {viewingReport.test.name}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="bg-slate-700/50 p-6 rounded-lg border border-slate-600">
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>
+<<<<<<< HEAD
                     <h3 className="font-semibold mb-2 text-white">Patient Information</h3>
                     <p className="text-slate-300">
                       <strong>Name:</strong> {viewingReport.patientName}
@@ -108,6 +133,26 @@ export default function BookingHistory({ bookings, patient, onBack }) {
                     </p>
                     <p className="text-slate-300">
                       <strong>Category:</strong> {viewingReport.category}
+=======
+                    <h3 className="font-semibold mb-2">Patient Information</h3>
+                    <p>
+                      <strong>Name:</strong> {viewingReport.patient.name}
+                    </p>
+                    <p>
+                      <strong>Patient ID:</strong> {patient?.patientId}
+                    </p>
+                    <p>
+                      <strong>Test Date:</strong> {new Date(viewingReport.scheduledDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Test Information</h3>
+                    <p>
+                      <strong>Test:</strong> {viewingReport.test.name}
+                    </p>
+                    <p>
+                      <strong>Category:</strong> {viewingReport.test.category}
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
                     </p>
                     <p className="text-slate-300">
                       <strong>Report Date:</strong> {new Date().toLocaleDateString()}
@@ -167,8 +212,13 @@ export default function BookingHistory({ bookings, patient, onBack }) {
           </div>
           <p className="text-slate-300">View your test bookings and download reports</p>
           {patient && (
+<<<<<<< HEAD
             <p className="text-sm text-blue-400 mt-2">
               Patient: {patient.name} (ID: {patient.id})
+=======
+            <p className="text-sm text-blue-600 mt-2">
+              Patient: {patient.name} (ID: {patient.patientId})
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
             </p>
           )}
         </div>
@@ -185,25 +235,34 @@ export default function BookingHistory({ bookings, patient, onBack }) {
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => (
+<<<<<<< HEAD
               <Card key={booking.id} className="hover:shadow-xl transition-all duration-300 bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 hover:border-slate-600">
+=======
+              <Card key={booking._id} className="hover:shadow-md transition-shadow">
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
+<<<<<<< HEAD
                         <TestTube className="h-5 w-5 text-blue-400 mr-2" />
                         <h3 className="text-lg font-semibold text-white">{booking.testName}</h3>
+=======
+                        <TestTube className="h-5 w-5 text-blue-600 mr-2" />
+                        <h3 className="text-lg font-semibold">{booking.test.name}</h3>
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
                         <Badge className={`ml-3 ${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                       </div>
 
                       <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-300">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2" />
-                          <span>Booked: {booking.bookingDate}</span>
+                          <span>Booked: {new Date(booking.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-2" />
                           <span>
-                            Scheduled: {booking.scheduledDate} at {booking.scheduledTime}
+                            Scheduled: {new Date(booking.scheduledDate).toLocaleDateString()} at {booking.scheduledTime}
                           </span>
                         </div>
                         <div className="flex items-center">
@@ -211,7 +270,11 @@ export default function BookingHistory({ bookings, patient, onBack }) {
                         </div>
                       </div>
 
+<<<<<<< HEAD
                       <p className="text-sm text-slate-400 mt-2">Category: {booking.category}</p>
+=======
+                      <p className="text-sm text-gray-500 mt-2">Category: {booking.test.category}</p>
+>>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
                     </div>
 
                     <div className="flex gap-2 mt-4 md:mt-0">
