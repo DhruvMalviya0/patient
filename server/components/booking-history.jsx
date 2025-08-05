@@ -49,75 +49,75 @@ export default function BookingHistory({ bookings, patient, onBack }) {
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
-        return "bg-green-100 text-green-800"
+        return "bg-emerald-900/50 text-emerald-300 border-emerald-700"
       case "Scheduled":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-900/50 text-blue-300 border-blue-700"
       case "In Progress":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-900/50 text-yellow-300 border-yellow-700"
       case "Cancelled":
-        return "bg-red-100 text-red-800"
+        return "bg-red-900/50 text-red-300 border-red-700"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-slate-900/50 text-slate-300 border-slate-700"
     }
   }
 
   if (viewingReport) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => setViewingReport(null)} className="mb-4">
+            <Button variant="ghost" onClick={() => setViewingReport(null)} className="mb-4 text-slate-300 hover:text-white hover:bg-slate-700">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to History
             </Button>
           </div>
 
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-white">
                 <FileText className="h-6 w-6 mr-2" />
                 Test Report - {viewingReport.testName}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-50 p-6 rounded-lg">
+              <div className="bg-slate-700/50 p-6 rounded-lg border border-slate-600">
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <h3 className="font-semibold mb-2">Patient Information</h3>
-                    <p>
+                    <h3 className="font-semibold mb-2 text-white">Patient Information</h3>
+                    <p className="text-slate-300">
                       <strong>Name:</strong> {viewingReport.patientName}
                     </p>
-                    <p>
+                    <p className="text-slate-300">
                       <strong>Patient ID:</strong> {patient?.id}
                     </p>
-                    <p>
+                    <p className="text-slate-300">
                       <strong>Test Date:</strong> {viewingReport.scheduledDate}
                     </p>
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">Test Information</h3>
-                    <p>
+                    <h3 className="font-semibold mb-2 text-white">Test Information</h3>
+                    <p className="text-slate-300">
                       <strong>Test:</strong> {viewingReport.testName}
                     </p>
-                    <p>
+                    <p className="text-slate-300">
                       <strong>Category:</strong> {viewingReport.category}
                     </p>
-                    <p>
+                    <p className="text-slate-300">
                       <strong>Report Date:</strong> {new Date().toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
-                <div className="border-t pt-6">
-                  <h3 className="font-semibold mb-4">Test Results</h3>
+                <div className="border-t border-slate-600 pt-6">
+                  <h3 className="font-semibold mb-4 text-white">Test Results</h3>
                   <div className="space-y-4">
-                    <div className="bg-white p-4 rounded border">
-                      <h4 className="font-medium text-green-700 mb-2">✓ Normal Results</h4>
-                      <p className="text-sm text-gray-600">All parameters are within the normal reference range.</p>
+                    <div className="bg-slate-600/50 p-4 rounded border border-slate-500">
+                      <h4 className="font-medium text-emerald-400 mb-2">✓ Normal Results</h4>
+                      <p className="text-sm text-slate-300">All parameters are within the normal reference range.</p>
                     </div>
-                    <div className="bg-white p-4 rounded border">
-                      <h4 className="font-medium mb-2">Key Findings</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
+                    <div className="bg-slate-600/50 p-4 rounded border border-slate-500">
+                      <h4 className="font-medium mb-2 text-white">Key Findings</h4>
+                      <ul className="text-sm text-slate-300 space-y-1">
                         <li>• No abnormalities detected</li>
                         <li>• All values within expected limits</li>
                         <li>• No immediate concerns identified</li>
@@ -128,11 +128,11 @@ export default function BookingHistory({ bookings, patient, onBack }) {
               </div>
 
               <div className="mt-6 flex gap-4">
-                <Button onClick={() => handleDownloadReport(viewingReport)}>
+                <Button onClick={() => handleDownloadReport(viewingReport)} className="bg-blue-600 hover:bg-blue-700">
                   <Download className="h-4 w-4 mr-2" />
                   Download Report
                 </Button>
-                <Button variant="outline" onClick={() => setViewingReport(null)}>
+                <Button variant="outline" onClick={() => setViewingReport(null)} className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
                   Close Report
                 </Button>
               </div>
@@ -144,10 +144,10 @@ export default function BookingHistory({ bookings, patient, onBack }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
-          <Button variant="ghost" onClick={onBack} className="mb-4">
+          <Button variant="ghost" onClick={onBack} className="mb-4 text-slate-300 hover:text-white hover:bg-slate-700">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Button>
@@ -155,40 +155,40 @@ export default function BookingHistory({ bookings, patient, onBack }) {
 
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Clock className="h-12 w-12 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-800">Booking History</h1>
+            <Clock className="h-12 w-12 text-blue-400 mr-3" />
+            <h1 className="text-3xl font-bold text-white">Booking History</h1>
           </div>
-          <p className="text-gray-600">View your test bookings and download reports</p>
+          <p className="text-slate-300">View your test bookings and download reports</p>
           {patient && (
-            <p className="text-sm text-blue-600 mt-2">
+            <p className="text-sm text-blue-400 mt-2">
               Patient: {patient.name} (ID: {patient.id})
             </p>
           )}
         </div>
 
         {bookings.length === 0 ? (
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
             <CardContent className="text-center py-12">
-              <TestTube className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">No bookings found</h3>
-              <p className="text-gray-500 mb-4">You haven't booked any tests yet.</p>
-              <Button onClick={onBack}>Browse Lab Tests</Button>
+              <TestTube className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-slate-300 mb-2">No bookings found</h3>
+              <p className="text-slate-400 mb-4">You haven't booked any tests yet.</p>
+              <Button onClick={onBack} className="bg-blue-600 hover:bg-blue-700">Browse Lab Tests</Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
             {bookings.map((booking) => (
-              <Card key={booking.id} className="hover:shadow-md transition-shadow">
+              <Card key={booking.id} className="hover:shadow-xl transition-all duration-300 bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 hover:border-slate-600">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
-                        <TestTube className="h-5 w-5 text-blue-600 mr-2" />
-                        <h3 className="text-lg font-semibold">{booking.testName}</h3>
+                        <TestTube className="h-5 w-5 text-blue-400 mr-2" />
+                        <h3 className="text-lg font-semibold text-white">{booking.testName}</h3>
                         <Badge className={`ml-3 ${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                       </div>
 
-                      <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-600">
+                      <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-300">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2" />
                           <span>Booked: {booking.bookingDate}</span>
@@ -200,28 +200,28 @@ export default function BookingHistory({ bookings, patient, onBack }) {
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <span className="font-medium">₹{booking.price}</span>
+                          <span className="font-medium text-white">₹{booking.price}</span>
                         </div>
                       </div>
 
-                      <p className="text-sm text-gray-500 mt-2">Category: {booking.category}</p>
+                      <p className="text-sm text-slate-400 mt-2">Category: {booking.category}</p>
                     </div>
 
                     <div className="flex gap-2 mt-4 md:mt-0">
                       {booking.reportAvailable && (
                         <>
-                          <Button variant="outline" size="sm" onClick={() => handleViewReport(booking)}>
+                          <Button variant="outline" size="sm" onClick={() => handleViewReport(booking)} className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
                             <Eye className="h-4 w-4 mr-2" />
                             View Report
                           </Button>
-                          <Button size="sm" onClick={() => handleDownloadReport(booking)}>
+                          <Button size="sm" onClick={() => handleDownloadReport(booking)} className="bg-blue-600 hover:bg-blue-700">
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
                         </>
                       )}
                       {!booking.reportAvailable && (
-                        <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                        <Badge variant="outline" className="text-yellow-400 border-yellow-600">
                           Report Pending
                         </Badge>
                       )}

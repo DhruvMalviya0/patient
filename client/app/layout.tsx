@@ -4,8 +4,8 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'HealthLab Portal',
+  description: 'Your trusted partner for lab testing and health monitoring',
   generator: 'v0.dev',
 }
 
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <style>{`
 html {
@@ -25,7 +25,7 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body className="bg-background text-foreground">{children}</body>
     </html>
   )
 }
