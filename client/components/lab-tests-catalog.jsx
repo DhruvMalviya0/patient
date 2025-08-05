@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Search, TestTube, Clock, DollarSign, Calendar } from "lucide-react"
+import { ArrowLeft, Search, TestTube, Clock, Calendar } from "lucide-react"
 
 const labTests = [
   {
@@ -169,7 +169,6 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
 
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-sm">
-                    <DollarSign className="h-4 w-4 text-green-600 mr-2" />
                     <span className="font-semibold">₹{test.price}</span>
                   </div>
                   <div className="flex items-center text-sm">

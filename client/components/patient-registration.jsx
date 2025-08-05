@@ -13,6 +13,7 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
     phone: "",
     dateOfBirth: "",
     gender: "",
@@ -39,6 +40,11 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid"
     }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required"
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
+    }
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required"
     } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
@@ -46,27 +52,40 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
     }
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required"
     if (!formData.gender) newErrors.gender = "Gender is required"
-    if (!formData.address.trim()) newErrors.address = "Address is required"
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is required"
+    } else if (formData.address.trim().length < 3) {
+      newErrors.address = "Address must be at least 3 characters"
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateForm()) return
 
     setIsSubmitting(true)
 
-    setTimeout(() => {
-      const patientData = {
-        ...formData,
-        id: `PAT${Date.now()}`,
-        registrationDate: new Date().toLocaleDateString(),
-      }
-      onRegistrationComplete(patientData)
+    try {
+      // Import the auth API
+      const { auth } = await import('@/lib/api')
+      
+      // Register the patient
+      const response = await auth.register(formData)
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', response.data.token)
+      
+      // Complete registration
+      onRegistrationComplete(response.data.patient)
+    } catch (error) {
+      console.error('Registration error:', error)
+      alert(error.response?.data?.message || 'Registration failed. Please try again.')
+    } finally {
       setIsSubmitting(false)
-    }, 1500)
+    }
   }
 
   return (
@@ -116,6 +135,19 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
                       placeholder="Enter your email"
                     />
                     {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="password">Password *</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange("password", e.target.value)}
+                      className={errors.password ? "border-red-500" : ""}
+                      placeholder="Enter your password"
+                    />
+                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                   </div>
                 </div>
 

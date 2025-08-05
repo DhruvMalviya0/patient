@@ -54,10 +54,10 @@ const patientSchema = new mongoose.Schema(
       maxlength: [1000, "Medical history cannot exceed 1000 characters"],
     },
     patientId: {
-      type: String,
-      unique: true,
-      required: true,
-    },
+    type: String,
+    unique: true,
+    sparse: true,
+  },
     isActive: {
       type: Boolean,
       default: true,
@@ -83,9 +83,9 @@ patientSchema.pre("save", async function (next) {
 
 // Generate patient ID before saving
 patientSchema.pre("save", function (next) {
-  if (!this.patientId) {
-    this.patientId = "PAT" + Date.now() + Math.floor(Math.random() * 1000)
-  }
+  if (!this.isNew) return next();
+  
+  this.patientId = "PAT" + Date.now() + Math.floor(Math.random() * 1000)
   next()
 })
 

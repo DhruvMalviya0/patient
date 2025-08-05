@@ -5,41 +5,48 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Download, Calendar, TestTube, Clock, FileText, Eye } from "lucide-react"
+import { generateMedicalReportPDF } from "@/lib/pdfUtils"
 
-const generateDummyReport = (booking) => {
-  const reportData = `
-Patient Report
-==============
-
-Patient Name: ${booking.patientName}
-Test: ${booking.testName}
-Booking Date: ${booking.bookingDate}
-Report Date: ${new Date().toLocaleDateString()}
-
-Test Results:
-- All parameters within normal range
-- No abnormalities detected
-- Recommended follow-up: 6 months
-
-This is a dummy report for demonstration purposes.
-  `.trim()
-
-  const blob = new Blob([reportData], { type: "text/plain" })
-  return URL.createObjectURL(blob)
-}
+// Legacy text report generator kept for reference
+// const generateDummyReport = (booking) => {
+//   const reportData = `
+// Patient Report
+// ==============
+// 
+// Patient Name: ${booking.patientName}
+// Test: ${booking.testName}
+// Booking Date: ${booking.bookingDate}
+// Report Date: ${new Date().toLocaleDateString()}
+// 
+// Test Results:
+// - All parameters within normal range
+// - No abnormalities detected
+// - Recommended follow-up: 6 months
+// 
+// This is a dummy report for demonstration purposes.
+//   `.trim()
+// 
+//   const blob = new Blob([reportData], { type: "text/plain" })
+//   return URL.createObjectURL(blob)
+// }
 
 export default function BookingHistory({ bookings, patient, onBack }) {
   const [viewingReport, setViewingReport] = useState(null)
 
   const handleDownloadReport = (booking) => {
-    const reportUrl = generateDummyReport(booking)
-    const link = document.createElement("a")
-    link.href = reportUrl
-    link.download = `${booking.testName.replace(/\s+/g, "_")}_Report_${booking.id}.txt`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(reportUrl)
+    // Create report data object with all necessary information
+    const reportData = {
+      patientName: booking.patientName,
+      patientId: patient?.id || 'Unknown',
+      testName: booking.testName,
+      category: booking.category,
+      bookingDate: booking.bookingDate,
+      scheduledDate: booking.scheduledDate,
+      scheduledTime: booking.scheduledTime
+    }
+    
+    // Generate PDF using the utility function
+    generateMedicalReportPDF(reportData)
   }
 
   const handleViewReport = (booking) => {

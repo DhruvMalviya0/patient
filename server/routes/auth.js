@@ -17,7 +17,7 @@ router.post(
       .withMessage("Phone number must be 10 digits"),
     body("dateOfBirth").isISO8601().withMessage("Please enter a valid date of birth"),
     body("gender").isIn(["male", "female", "other", "prefer-not-to-say"]).withMessage("Please select a valid gender"),
-    body("address").trim().isLength({ min: 10, max: 500 }).withMessage("Address must be between 10 and 500 characters"),
+    body("address").trim().isLength({ min: 3, max: 500 }).withMessage("Address must be between 3 and 500 characters"),
   ],
   async (req, res) => {
     try {
