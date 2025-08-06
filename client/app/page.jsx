@@ -21,14 +21,12 @@ export default function PatientPortal() {
   useEffect(() => {
     const token = localStorage.getItem('authToken')
     if (token) {
-      // Fetch patient profile
       const fetchProfile = async () => {
         try {
           const response = await patientsAPI.getProfile()
           setPatient(response.data)
           setIsAuthenticated(true)
           
-          // Load bookings
           const bookingsResponse = await bookingsAPI.getAll()
           setBookings(bookingsResponse.data)
         } catch (error) {
@@ -70,10 +68,10 @@ export default function PatientPortal() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <Heart className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-          <p className="text-gray-600">Loading...</p>
+          <Heart className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-pulse" />
+          <p className="text-slate-300">Loading...</p>
         </div>
       </div>
     )

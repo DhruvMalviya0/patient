@@ -5,78 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
 import { ArrowLeft, Search, TestTube, Clock, Calendar } from "lucide-react"
-
-const labTests = [
-  {
-    id: 1,
-    name: "Complete Blood Count (CBC)",
-    category: "Blood Tests",
-    price: 299,
-    duration: "2-4 hours",
-    description: "Comprehensive blood analysis including RBC, WBC, platelets, and hemoglobin levels.",
-    preparation: "No fasting required",
-    popular: true,
-  },
-  {
-    id: 2,
-    name: "Lipid Profile",
-    category: "Blood Tests",
-    price: 450,
-    duration: "4-6 hours",
-    description: "Cholesterol and triglyceride levels to assess cardiovascular health.",
-    preparation: "12-hour fasting required",
-    popular: true,
-  },
-  {
-    id: 3,
-    name: "Thyroid Function Test (TFT)",
-    category: "Hormone Tests",
-    price: 650,
-    duration: "6-8 hours",
-    description: "TSH, T3, and T4 levels to evaluate thyroid function.",
-    preparation: "No special preparation needed",
-    popular: false,
-  },
-  {
-    id: 4,
-    name: "Diabetes Panel (HbA1c)",
-    category: "Blood Tests",
-    price: 380,
-    duration: "4-6 hours",
-    description: "Blood sugar levels and HbA1c for diabetes monitoring.",
-    preparation: "No fasting required for HbA1c",
-    popular: true,
-  },
-  {
-    id: 5,
-    name: "Liver Function Test (LFT)",
-    category: "Blood Tests",
-    price: 520,
-    duration: "4-6 hours",
-    description: "Comprehensive liver enzyme and protein analysis.",
-    preparation: "8-hour fasting recommended",
-    popular: false,
-  },
-  {
-    id: 6,
-    name: "Vitamin D Test",
-    category: "Vitamin Tests",
-    price: 750,
-    duration: "24-48 hours",
-    description: "Vitamin D3 levels to assess bone health and immunity.",
-    preparation: "No special preparation needed",
-    popular: true,
-  },
-]
-=======
-import { ArrowLeft, Search, TestTube, Clock, DollarSign, Calendar } from "lucide-react"
 import { testsAPI, bookingsAPI } from "@/lib/api"
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
 
 export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -90,7 +20,6 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const { testsAPI } = await import('@/lib/api')
         const [testsResponse, categoriesResponse] = await Promise.all([
           testsAPI.getAll(),
           testsAPI.getCategories()
@@ -120,7 +49,6 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
     setBookingTest(test)
     
     try {
-      const { bookingsAPI } = await import('@/lib/api')
       const bookingData = {
         testId: test._id,
         scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -141,10 +69,10 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <TestTube className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-          <p className="text-gray-600">Loading tests...</p>
+          <TestTube className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-pulse" />
+          <p className="text-slate-300">Loading tests...</p>
         </div>
       </div>
     )
@@ -200,11 +128,7 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTests.map((test) => (
-<<<<<<< HEAD
-            <Card key={test.id} className="hover:shadow-xl transition-all duration-300 bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 hover:border-slate-600">
-=======
-            <Card key={test._id} className="hover:shadow-lg transition-shadow">
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
+            <Card key={test._id} className="hover:shadow-xl transition-all duration-300 bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 hover:border-slate-600">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg text-white">{test.name}</CardTitle>
@@ -223,11 +147,7 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
 
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-sm">
-<<<<<<< HEAD
-                    <span className="font-semibold">₹{test.price}</span>
-=======
                     <span className="font-semibold text-white">₹{test.price}</span>
->>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
                   </div>
                   <div className="flex items-center text-sm">
                     <Clock className="h-4 w-4 text-blue-400 mr-2" />
@@ -239,17 +159,12 @@ export default function LabTestsCatalog({ patient, onTestBooked, onBack }) {
                   </div>
                 </div>
 
-<<<<<<< HEAD
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={() => handleBookTest(test)} disabled={bookingTest?.id === test.id}>
-                  {bookingTest?.id === test.id ? "Booking..." : "Book Test"}
-=======
                 <Button 
-                  className="w-full" 
+                  className="w-full bg-emerald-600 hover:bg-emerald-700" 
                   onClick={() => handleBookTest(test)} 
                   disabled={bookingTest?._id === test._id}
                 >
                   {bookingTest?._id === test._id ? "Booking..." : "Book Test"}
->>>>>>> 55e2b7feb9d242154308376969111cc7d19395d2
                 </Button>
               </CardContent>
             </Card>

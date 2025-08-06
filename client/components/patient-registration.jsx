@@ -74,13 +74,9 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
 <<<<<<< HEAD
 >>>>>>> fd8d5830b8a39491e9681aa9fb1442092f545ce0
     try {
-      // Import the auth API
       const { authAPI } = await import('@/lib/api')
-      
-      // Register the patient
       const response = await authAPI.register(formData)
       
-      // Complete registration
       onRegistrationComplete(response.data.patient)
     } catch (error) {
       console.error('Registration error:', error)
@@ -175,16 +171,16 @@ export default function PatientRegistration({ onRegistrationComplete, onBack }) 
                   </div>
 
                   <div>
-                    <Label htmlFor="password">Password *</Label>
+                    <Label htmlFor="password" className="text-slate-200">Password *</Label>
                     <Input
                       id="password"
                       type="password"
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
-                      className={errors.password ? "border-red-500" : ""}
+                      className={`bg-slate-700 border-slate-600 text-white placeholder:text-slate-400 ${errors.password ? "border-red-500" : ""}`}
                       placeholder="Enter your password"
                     />
-                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                    {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password}</p>}
                   </div>
                 </div>
 

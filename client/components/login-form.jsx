@@ -45,13 +45,8 @@ export default function LoginForm({ onLoginSuccess, onRegisterClick }) {
     setIsSubmitting(true)
 
     try {
-      // Import the auth API
       const { authAPI } = await import('@/lib/api')
-      
-      // Login the patient
       const response = await authAPI.login(formData)
-      
-      // Complete login
       onLoginSuccess(response.data.patient)
     } catch (error) {
       console.error('Login error:', error)
